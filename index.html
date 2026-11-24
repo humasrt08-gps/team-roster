@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <!-- html2pdf.js untuk ekspor langsung ke file PDF A4 Portrait -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
@@ -43,7 +42,6 @@
       padding-bottom: 60px;
     }
 
-    /* === HERO / HEADER TURNAMEN === */
     .hero {
       position: relative;
       text-align: center;
@@ -99,7 +97,6 @@
       font-weight: 600;
     }
 
-    /* === CONTROLS & ACTION BAR === */
     .controls {
       max-width: 1240px;
       margin: 24px auto 30px;
@@ -122,8 +119,8 @@
     .search-box {
       position: relative;
       flex: 1;
-      min-width: 260px;
-      max-width: 440px;
+      min-width: 240px;
+      max-width: 400px;
     }
 
     .search-box input {
@@ -144,11 +141,33 @@
       box-shadow: 0 0 0 3px var(--turf-glow);
     }
 
+    .btn-add-player {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 20px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #052e16;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 20px var(--turf-glow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-add-player:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.45);
+    }
+
     .btn-pdf-all {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 13px 22px;
+      padding: 13px 20px;
       border-radius: 12px;
       border: none;
       background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -203,7 +222,6 @@
       box-shadow: 0 4px 15px var(--turf-glow);
     }
 
-    /* === CONTAINER & TEAM SECTION === */
     .container {
       max-width: 1240px;
       margin: 0 auto;
@@ -270,11 +288,38 @@
       margin-top: 2px;
     }
 
+    .team-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-quick-add {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--gold-light);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-quick-add:hover {
+      background: var(--gold);
+      color: #0f172a;
+    }
+
     .btn-download-team {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 18px;
+      padding: 10px 16px;
       border-radius: 10px;
       border: 1px solid rgba(16, 185, 129, 0.45);
       background: rgba(16, 185, 129, 0.15);
@@ -297,14 +342,12 @@
       cursor: wait;
     }
 
-    /* === PLAYER GRID (WEB VIEW) === */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
       gap: 18px;
     }
 
-    /* === TRADING CARD STYLE PLAYER CARD === */
     .card {
       background: linear-gradient(165deg, #183846 0%, #0d2029 100%);
       border-radius: 16px;
@@ -382,6 +425,7 @@
       top: 0; left: 0;
       width: 100%; height: 100%;
       object-fit: cover;
+      object-position: top center;
       transition: transform 0.4s ease;
     }
 
@@ -429,9 +473,315 @@
       text-overflow: ellipsis;
     }
 
-    /* =========================================================================
-       LIGHTBOX / MODAL PRESENTASI PEMAIN (KLIK FOTO JADI BESAR)
-       ========================================================================= */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      background: rgba(4, 11, 15, 0.88);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .upload-modal {
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      background: #0f232c;
+      border: 1.5px solid rgba(16, 185, 129, 0.45);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      animation: fadeOverlay 0.2s ease;
+    }
+
+    .upload-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: #09171e;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .upload-modal-header h3 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .upload-modal-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #a7f3d0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 11px 13px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: #071318;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .form-group input[type="text"]:focus {
+      border-color: var(--turf-green);
+    }
+
+    .batch-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(7, 19, 24, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+    }
+
+    .batch-info {
+      font-size: 12px;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+
+    .batch-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-batch-photos {
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.14);
+      color: var(--gold-light);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-batch-photos:hover {
+      background: var(--gold);
+      color: #0f172a;
+    }
+
+    .btn-add-row {
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-add-row:hover:not(:disabled) {
+      background: var(--turf-green);
+      color: #052e16;
+    }
+
+    .btn-add-row:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .player-rows-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .player-entry-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: #08151b;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+    }
+
+    .row-index-badge {
+      font-family: 'Oswald', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold-light);
+      min-width: 28px;
+      text-align: center;
+    }
+
+    .row-photo-btn {
+      width: 50px;
+      height: 58px;
+      border-radius: 8px;
+      border: 1.5px dashed rgba(16, 185, 129, 0.5);
+      background: #0d2029;
+      color: #94a3b8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .row-photo-btn:hover {
+      border-color: var(--turf-green);
+      color: #fff;
+    }
+
+    .row-photo-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    .row-photo-btn span {
+      font-size: 9px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .row-name-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .row-name-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: #0f232c;
+      color: #fff;
+      font-size: 13.5px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .row-name-input:focus {
+      border-color: var(--turf-green);
+    }
+
+    .row-photo-status {
+      font-size: 10.5px;
+      color: #94a3b8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .row-photo-status.ready {
+      color: #6ee7b7;
+    }
+
+    .btn-remove-row {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      background: rgba(239, 68, 68, 0.12);
+      color: #fca5a5;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .btn-remove-row:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .upload-status {
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .upload-status.error {
+      display: block;
+      background: rgba(220, 38, 38, 0.15);
+      border: 1px solid rgba(220, 38, 38, 0.4);
+      color: #fca5a5;
+    }
+
+    .upload-status.success {
+      display: block;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+    }
+
+    .upload-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .btn-submit-upload {
+      flex: 1;
+      padding: 13px;
+      border-radius: 10px;
+      border: none;
+      background: var(--turf-green);
+      color: #052e16;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-submit-upload:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
     .lightbox-overlay {
       position: fixed;
       inset: 0;
@@ -627,9 +977,6 @@
       cursor: pointer;
     }
 
-    /* =========================================================================
-       TEMPLATE A4 PORTRAIT HEMAT TINTA (210mm x 297mm — ANTI TERPOTONG)
-       ========================================================================= */
     #pdf-render-staging {
       position: fixed;
       left: 0;
@@ -642,7 +989,7 @@
 
     .a4-sheet {
       width: 210mm;
-      height: 292mm; /* Margin aman 5mm di bawah agar html2canvas tidak memotong footer */
+      height: 292mm;
       background: #ffffff;
       color: #111827;
       padding: 8mm 10mm;
@@ -730,7 +1077,6 @@
       font-weight: 600;
     }
 
-    /* Tinggi eksplisit 4 baris (58mm x 4 + gap 3mm x 3 = 241mm) agar kotak tidak melar/terpotong */
     .a4-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -783,7 +1129,6 @@
       display: block;
     }
 
-    /* Footer kartu nama tepat di bawah foto (tinggi 9mm) */
     .a4-card-footer {
       height: 9mm;
       flex-shrink: 0;
@@ -828,42 +1173,83 @@
       color: #111827;
     }
 
-    /* === RESPONSIVE MOBILE === */
     @media (max-width: 640px) {
       .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
       .team-section { padding: 16px; }
       .team-title-wrap h2 { font-size: 20px; }
-      .btn-download-team { width: 100%; justify-content: center; }
+      .team-actions { width: 100%; }
+      .btn-download-team, .btn-quick-add { flex: 1; justify-content: center; }
       .lightbox-nav { width: 38px; height: 38px; font-size: 16px; }
+      .player-entry-row { flex-wrap: wrap; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HERO HEADER -->
   <header class="hero">
     <div class="tournament-tag">⚽ OFFICIAL TEAM ROSTER</div>
     <h1>WARANGGONO CUP 2026</h1>
     <p id="subtitle">Memuat data skuad tim...</p>
   </header>
 
-  <!-- CONTROLS -->
   <div class="controls">
     <div class="top-bar">
       <div class="search-box">
         <input type="search" id="search" placeholder="🔍 Cari nama pemain...">
       </div>
+      <button class="btn-add-player" onclick="openUploadModal('')">
+        ➕ Tambah Pemain / Tim
+      </button>
       <button class="btn-pdf-all" id="btn-export-all" onclick="downloadAllTeamsPDF()" disabled>
-        📄 Download Semua Tim (PDF A4 Portrait)
+        📄 Download Semua Tim (PDF A4)
       </button>
     </div>
     <div class="tabs" id="team-tabs"></div>
   </div>
 
-  <!-- MAIN CONTENT -->
   <main class="container" id="content">
     <div class="msg">⏳ Menyiapkan data pemain Waranggono Cup 2026...</div>
   </main>
+
+  <!-- MODAL MULTI-UPLOAD TIM, PEMAIN & FOTO -->
+  <div class="modal-overlay" id="upload-modal" onclick="closeUploadOnBg(event)">
+    <div class="upload-modal">
+      <div class="upload-modal-header">
+        <h3>➕ Input Data Pemain (Bisa Lebih dari 1)</h3>
+        <button class="lightbox-close" onclick="closeUploadModal()" title="Tutup">✕</button>
+      </div>
+      <form class="upload-modal-body" id="upload-form" onsubmit="submitPlayersBatch(event)">
+        <div class="form-group">
+          <label for="input-tim">Nama Tim Peserta</label>
+          <input type="text" id="input-tim" list="existing-teams-list" placeholder="Pilih tim atau ketik nama tim baru..." oninput="updateBatchSlotInfo()" required>
+          <datalist id="existing-teams-list"></datalist>
+        </div>
+
+        <div class="batch-toolbar">
+          <span class="batch-info" id="batch-slot-info">Antrean: 1 pemain</span>
+          <div class="batch-btns">
+            <input type="file" id="batch-photos-input" accept="image/*" multiple style="display:none" onchange="handleBatchPhotosSelect(event)">
+            <button type="button" class="btn-batch-photos" onclick="document.getElementById('batch-photos-input').click()">
+              🖼️ Pilih Banyak Foto Sekaligus
+            </button>
+            <button type="button" class="btn-add-row" id="btn-add-row" onclick="addPlayerRow()">
+              + Baris Pemain
+            </button>
+          </div>
+        </div>
+
+        <div class="player-rows-list" id="player-rows-list"></div>
+
+        <div class="upload-status" id="upload-status"></div>
+
+        <div class="upload-actions">
+          <button type="submit" class="btn-submit-upload" id="btn-submit-upload">
+            💾 Simpan Semua ke Roster
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- MODAL / LIGHTBOX PRESENTASI PEMAIN -->
   <div class="lightbox-overlay" id="lightbox" onclick="closeLightboxOnBg(event)">
@@ -886,11 +1272,10 @@
     </div>
   </div>
 
-  <!-- STAGING AREA UNTUK GENERATE PDF A4 PORTRAIT -->
   <div id="pdf-render-staging"></div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbw76jWvS7RMpu6FB-roFV2KlNYeHasWYPvMp5uw7SoxqtTrxoUDDM8O4_Ha9Yz2jV1V/exec?action=getPlayers';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbw76jWvS7RMpu6FB-roFV2KlNYeHasWYPvMp5uw7SoxqtTrxoUDDM8O4_Ha9Yz2jV1V/exec';
 
     const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
       '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="480" viewBox="0 0 400 480">' +
@@ -902,8 +1287,8 @@
 
     let allPlayers = [];
     let activeTeam = 'ALL';
-
-    // State untuk modal presentasi (lightbox)
+    let draftRows = [];
+    let nextRowId = 1;
     let currentTeamSquad = [];
     let currentSlideIndex = 0;
 
@@ -924,18 +1309,21 @@
 
     async function loadData() {
       try {
-        const res = await fetch(API_URL);
+        const res = await fetch(`${API_URL}?action=getPlayers`);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const json = await res.json();
         if (!json.success) throw new Error(json.error || 'Respons tidak valid');
 
         allPlayers = json.data || [];
-        const teams = [...new Set(allPlayers.map(p => p.tim || 'Tanpa Tim'))];
+        const teams = [...new Set(allPlayers.map(p => p.tim || 'Tanpa Tim'))].sort();
 
         document.getElementById('subtitle').textContent =
           `${allPlayers.length} Pemain Terdaftar • ${teams.length} Tim Peserta (Klik foto untuk mode presentasi)`;
 
         document.getElementById('btn-export-all').disabled = allPlayers.length === 0;
+
+        const datalist = document.getElementById('existing-teams-list');
+        datalist.innerHTML = teams.map(t => `<option value="${esc(t)}">`).join('');
 
         renderTabs(teams);
         render();
@@ -946,10 +1334,11 @@
 
     function renderTabs(teams) {
       const tabsContainer = document.getElementById('team-tabs');
-      let html = `<button class="tab-btn active" onclick="filterTeam('ALL', this)">Semua Tim (${teams.length})</button>`;
+      let html = `<button class="tab-btn ${activeTeam === 'ALL' ? 'active' : ''}" onclick="filterTeam('ALL', this)">Semua Tim (${teams.length})</button>`;
 
-      teams.sort().forEach(tim => {
-        html += `<button class="tab-btn" onclick="filterTeam('${esc(tim)}', this)">${esc(tim)}</button>`;
+      teams.forEach(tim => {
+        const isActive = activeTeam === tim ? 'active' : '';
+        html += `<button class="tab-btn ${isActive}" onclick="filterTeam('${esc(tim)}', this)">${esc(tim)}</button>`;
       });
 
       tabsContainer.innerHTML = html;
@@ -958,7 +1347,7 @@
     function filterTeam(teamName, btn) {
       activeTeam = teamName;
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
       document.getElementById('search').value = '';
       render();
     }
@@ -990,6 +1379,7 @@
       Object.keys(grouped).sort().forEach(tim => {
         const players = grouped[tim];
         const initials = tim.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase() || 'FC';
+        const isFull = players.length >= 12;
 
         html += `
           <section class="team-section">
@@ -1001,9 +1391,12 @@
                   <span class="team-count">${players.length} / 12 Pemain</span>
                 </div>
               </div>
-              <button class="btn-download-team" onclick="downloadSingleTeamPDF('${esc(tim)}', this)">
-                📥 Download PDF A4 (${esc(tim)})
-              </button>
+              <div class="team-actions">
+                ${!isFull ? `<button class="btn-quick-add" onclick="openUploadModal('${esc(tim)}')">➕ Tambah ke ${esc(tim)}</button>` : ''}
+                <button class="btn-download-team" onclick="downloadSingleTeamPDF('${esc(tim)}', this)">
+                  📥 Download PDF A4
+                </button>
+              </div>
             </div>
             <div class="grid">
               ${players.map((p, idx) => createCard(p, idx, tim)).join('')}
@@ -1038,9 +1431,304 @@
       `;
     }
 
-    /* =========================================================================
-       KONTROL LIGHTBOX / MODE PRESENTASI PEMAIN
-       ========================================================================= */
+    function getExistingTeamCount(teamName) {
+      const key = String(teamName || '').trim().toLowerCase();
+      if (!key) return 0;
+      return allPlayers.filter(p => String(p.tim || '').trim().toLowerCase() === key).length;
+    }
+
+    function getMaxAllowedDraftRows(teamName) {
+      const existing = getExistingTeamCount(teamName);
+      return Math.max(1, 12 - existing);
+    }
+
+    function createBlankRow(prefillName = '') {
+      return {
+        id: nextRowId++,
+        nama: prefillName,
+        fotoDataUrl: '',
+        fileLabel: '',
+        metaText: 'Belum ada foto'
+      };
+    }
+
+    function openUploadModal(prefillTeam) {
+      const modal = document.getElementById('upload-modal');
+      const timInput = document.getElementById('input-tim');
+      const statusEl = document.getElementById('upload-status');
+
+      statusEl.className = 'upload-status';
+      statusEl.textContent = '';
+      document.getElementById('batch-photos-input').value = '';
+
+      if (prefillTeam) {
+        timInput.value = prefillTeam;
+      } else if (activeTeam !== 'ALL') {
+        timInput.value = activeTeam;
+      } else {
+        timInput.value = '';
+      }
+
+      const maxAllowed = getMaxAllowedDraftRows(timInput.value);
+      const initialCount = Math.min(2, maxAllowed);
+      draftRows = Array.from({ length: initialCount }, () => createBlankRow());
+
+      renderDraftRows();
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeUploadModal() {
+      document.getElementById('upload-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function closeUploadOnBg(e) {
+      if (e.target.id === 'upload-modal') closeUploadModal();
+    }
+
+    function addPlayerRow(prefillName = '') {
+      const timVal = document.getElementById('input-tim').value;
+      const maxAllowed = getMaxAllowedDraftRows(timVal);
+      if (draftRows.length >= maxAllowed) return;
+
+      draftRows.push(createBlankRow(prefillName));
+      renderDraftRows();
+    }
+
+    function removePlayerRow(rowId) {
+      if (draftRows.length <= 1) return;
+      draftRows = draftRows.filter(r => r.id !== rowId);
+      renderDraftRows();
+    }
+
+    function updateBatchSlotInfo() {
+      const timVal = document.getElementById('input-tim').value.trim();
+      const existing = getExistingTeamCount(timVal);
+      const maxAllowed = getMaxAllowedDraftRows(timVal);
+
+      if (draftRows.length > maxAllowed) {
+        draftRows = draftRows.slice(0, maxAllowed);
+        renderDraftRows();
+        return;
+      }
+
+      const infoEl = document.getElementById('batch-slot-info');
+      const addBtn = document.getElementById('btn-add-row');
+
+      if (timVal) {
+        infoEl.textContent = `Skuad "${timVal}": ${existing}/12 terisi • Antrean: ${draftRows.length} (Sisa kuota: ${maxAllowed})`;
+      } else {
+        infoEl.textContent = `Antrean: ${draftRows.length} pemain (Maks. 12/tim)`;
+      }
+
+      addBtn.disabled = draftRows.length >= maxAllowed;
+    }
+
+    function renderDraftRows() {
+      const listEl = document.getElementById('player-rows-list');
+      listEl.innerHTML = draftRows.map((row, idx) => {
+        const num = String(idx + 1).padStart(2, '0');
+        return `
+          <div class="player-entry-row" data-row-id="${row.id}">
+            <div class="row-index-badge">#${num}</div>
+            <label class="row-photo-btn" title="Pilih foto pemain #${num}">
+              <input type="file" accept="image/*" style="display:none" onchange="handleSingleRowPhoto(${row.id}, event)">
+              ${row.fotoDataUrl
+                ? `<img src="${row.fotoDataUrl}" alt="Foto ${num}">`
+                : `<span style="font-size:16px;margin:0;">📸</span><span>FOTO</span>`}
+            </label>
+            <div class="row-name-wrap">
+              <input type="text"
+                     class="row-name-input"
+                     placeholder="Nama pemain ke-${idx + 1}..."
+                     value="${esc(row.nama)}"
+                     oninput="onDraftNameInput(${row.id}, this.value)">
+              <div class="row-photo-status ${row.fotoDataUrl ? 'ready' : ''}">${esc(row.metaText)}</div>
+            </div>
+            ${draftRows.length > 1
+              ? `<button type="button" class="btn-remove-row" onclick="removePlayerRow(${row.id})" title="Hapus baris">✕</button>`
+              : ''}
+          </div>
+        `;
+      }).join('');
+
+      updateBatchSlotInfo();
+    }
+
+    function onDraftNameInput(rowId, val) {
+      const target = draftRows.find(r => r.id === rowId);
+      if (target) target.nama = val;
+    }
+
+    function compressImageFile(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const MAX_WIDTH = 700;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            const approxKB = Math.round((dataUrl.length * 3) / 4 / 1024);
+            resolve({
+              dataUrl: dataUrl,
+              metaText: `✓ ${file.name} (~${approxKB} KB)`
+            });
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleSingleRowPhoto(rowId, event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const target = draftRows.find(r => r.id === rowId);
+      if (!target) return;
+
+      target.metaText = '⏳ Mengompres foto...';
+      renderDraftRows();
+
+      const compressed = await compressImageFile(file);
+      target.fotoDataUrl = compressed.dataUrl;
+      target.fileLabel = file.name;
+      target.metaText = compressed.metaText;
+
+      if (!target.nama.trim()) {
+        target.nama = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
+      }
+      renderDraftRows();
+    }
+
+    async function handleBatchPhotosSelect(event) {
+      const files = Array.from(event.target.files || []);
+      if (!files.length) return;
+
+      const timVal = document.getElementById('input-tim').value;
+      const maxAllowed = getMaxAllowedDraftRows(timVal);
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        let row = draftRows[i];
+
+        if (!row) {
+          if (draftRows.length < maxAllowed) {
+            row = createBlankRow();
+            draftRows.push(row);
+          } else {
+            break;
+          }
+        }
+
+        const compressed = await compressImageFile(file);
+        row.fotoDataUrl = compressed.dataUrl;
+        row.fileLabel = file.name;
+        row.metaText = compressed.metaText;
+
+        if (!row.nama.trim()) {
+          row.nama = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
+        }
+      }
+
+      event.target.value = '';
+      renderDraftRows();
+    }
+
+    async function uploadSinglePlayerItem(tim, playerItem) {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          tim: tim,
+          nama: playerItem.nama,
+          fotoBase64: playerItem.fotoDataUrl || '',
+          mimeType: 'image/jpeg'
+        })
+      });
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Gagal menyimpan data.');
+      }
+      return result;
+    }
+
+    async function submitPlayersBatch(event) {
+      event.preventDefault();
+      const tim = document.getElementById('input-tim').value.trim();
+      const btn = document.getElementById('btn-submit-upload');
+      const statusEl = document.getElementById('upload-status');
+
+      const queue = draftRows
+        .filter(r => (r.nama || '').trim().length > 0)
+        .map(r => ({
+          row: r,
+          nama: r.nama.trim(),
+          fotoDataUrl: r.fotoDataUrl || ''
+        }));
+
+      if (!tim || !queue.length) {
+        statusEl.className = 'upload-status error';
+        statusEl.textContent = '❌ Isi nama tim dan minimal 1 nama pemain.';
+        return;
+      }
+
+      btn.disabled = true;
+      statusEl.className = 'upload-status';
+      statusEl.textContent = '';
+
+      let successCount = 0;
+      const failedNames = [];
+
+      for (let i = 0; i < queue.length; i++) {
+        const item = queue[i];
+        btn.textContent = `⏳ Mengupload ${i + 1}/${queue.length}: ${item.nama}...`;
+        item.row.metaText = `⏳ Mengupload (${i + 1}/${queue.length})...`;
+        renderDraftRows();
+
+        try {
+          await uploadSinglePlayerItem(tim, item);
+          successCount++;
+          item.row.metaText = '✅ Tersimpan ke Drive & Sheets';
+        } catch (err) {
+          failedNames.push(`${item.nama} (${err.message})`);
+          item.row.metaText = `❌ Gagal: ${err.message}`;
+        }
+        renderDraftRows();
+      }
+
+      await loadData();
+
+      if (failedNames.length === 0) {
+        statusEl.className = 'upload-status success';
+        statusEl.textContent = `✅ Selesai! ${successCount} dari ${queue.length} pemain berhasil diupload.`;
+        const remaining = getMaxAllowedDraftRows(tim);
+        draftRows = remaining > 0 ? [createBlankRow()] : [];
+        renderDraftRows();
+      } else {
+        statusEl.className = 'upload-status error';
+        statusEl.textContent = `⚠️ Berhasil ${successCount}/${queue.length}. Gagal: ${failedNames.join('; ')}`;
+      }
+
+      btn.disabled = false;
+      btn.textContent = '💾 Simpan Semua ke Roster';
+    }
+
     function openLightbox(teamName, index) {
       const searchQuery = document.getElementById('search').value.toLowerCase().trim();
       let list = allPlayers.filter(d => (d.tim || 'Tanpa Tim') === teamName);
@@ -1064,7 +1752,8 @@
       const imgEl = document.getElementById('lb-img');
       imgEl.onerror = function() { this.onerror = null; this.src = PLACEHOLDER; };
       imgEl.referrerPolicy = 'no-referrer';
-      imgEl.src = p.fotoUrl || PLACEHOLDER;
+      const hdUrl = p.fileId ? `https://lh3.googleusercontent.com/d/${p.fileId}=w800` : (p.fotoUrl || PLACEHOLDER);
+      imgEl.src = hdUrl;
 
       document.getElementById('lb-num').textContent = `#${num}`;
       document.getElementById('lb-team').textContent = p.tim || 'Tanpa Tim';
@@ -1085,22 +1774,22 @@
     }
 
     function closeLightboxOnBg(e) {
-      if (e.target.id === 'lightbox') {
-        closeLightbox();
-      }
+      if (e.target.id === 'lightbox') closeLightbox();
     }
 
     document.addEventListener('keydown', (e) => {
       const lb = document.getElementById('lightbox');
-      if (!lb.classList.contains('open')) return;
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowRight') navigateLightbox(1);
-      if (e.key === 'ArrowLeft') navigateLightbox(-1);
+      const up = document.getElementById('upload-modal');
+      if (e.key === 'Escape') {
+        if (lb.classList.contains('open')) closeLightbox();
+        if (up.classList.contains('open')) closeUploadModal();
+      }
+      if (lb.classList.contains('open')) {
+        if (e.key === 'ArrowRight') navigateLightbox(1);
+        if (e.key === 'ArrowLeft') navigateLightbox(-1);
+      }
     });
 
-    /* =========================================================================
-       KONVERSI GAMBAR KE DATA URL (BASE64) AGAR AMAN SAAT RENDER PDF (ANTI-CORS)
-       ========================================================================= */
     async function toSafeDataURL(url) {
       if (!url || url.startsWith('data:')) return url || PLACEHOLDER;
       try {
@@ -1118,9 +1807,6 @@
       }
     }
 
-    /* =========================================================================
-       MEMBANGUN HALAMAN A4 PORTRAIT HEMAT TINTA (3 KOLOM x 4 BARIS = 12 PEMAIN)
-       ========================================================================= */
     async function buildTeamA4Element(teamName, players) {
       const squad = players.slice(0, 12);
       const safePhotos = await Promise.all(squad.map(p => toSafeDataURL(p.fotoUrl)));
@@ -1171,9 +1857,6 @@
       return sheet;
     }
 
-    /* =========================================================================
-       DOWNLOAD PDF A4 PORTRAIT PER TIM
-       ========================================================================= */
     async function downloadSingleTeamPDF(teamName, btnElement) {
       const originalText = btnElement.innerHTML;
       btnElement.disabled = true;
@@ -1188,7 +1871,6 @@
         const sheet = await buildTeamA4Element(teamName, teamPlayers);
         staging.appendChild(sheet);
 
-        // Beri jeda singkat agar browser selesai menghitung layout & render gambar
         await new Promise(r => setTimeout(r, 150));
 
         const safeFileName = `Roster_${teamName.replace(/[^a-zA-Z0-9_-]/g, '_')}_WaranggonoCup2026.pdf`;
@@ -1197,13 +1879,7 @@
           margin: 0,
           filename: safeFileName,
           image: { type: 'jpeg', quality: 0.96 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            scrollY: 0,
-            scrollX: 0
-          },
+          html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, scrollX: 0 },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
@@ -1218,9 +1894,6 @@
       }
     }
 
-    /* =========================================================================
-       DOWNLOAD PDF A4 PORTRAIT SEMUA TIM SEKALIGUS (1 TIM = 1 HALAMAN A4)
-       ========================================================================= */
     async function downloadAllTeamsPDF() {
       const btn = document.getElementById('btn-export-all');
       const originalText = btn.innerHTML;
@@ -1258,13 +1931,7 @@
           margin: 0,
           filename: 'Semua_Tim_Waranggono_Cup_2026_A4_Portrait.pdf',
           image: { type: 'jpeg', quality: 0.95 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            scrollY: 0,
-            scrollX: 0
-          },
+          html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, scrollX: 0 },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
           pagebreak: { mode: ['css', 'legacy'] }
         };
