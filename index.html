@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <style>
+<style>
     :root {
       --bg-stadium: #071318;
       --bg-surface: #0f232c;
@@ -23,6 +23,12 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Aturan defensif global untuk gambar; img di dalam wrapper foto ditimpa aturan khusus di bawah */
+    img {
+      max-width: 100%;
+      height: auto;
+    }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -40,6 +46,7 @@
       color: var(--text-main);
       min-height: 100vh;
       padding-bottom: 60px;
+      overflow-x: hidden; /* Cegah overflow horizontal pada layar HP */
     }
 
     .hero {
@@ -99,12 +106,14 @@
 
     .controls {
       max-width: 1240px;
+      width: 100%;
       margin: 24px auto 30px;
       padding: 0 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 16px;
+      overflow: hidden;
     }
 
     .top-bar {
@@ -224,8 +233,11 @@
 
     .container {
       max-width: 1240px;
+      width: 100%;
+      max-width: 100%;
       margin: 0 auto;
       padding: 0 20px;
+      overflow: hidden; /* Cegah overflow keluar container */
     }
 
     .team-section {
@@ -235,6 +247,9 @@
       padding: 24px;
       margin-bottom: 32px;
       backdrop-filter: blur(8px);
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden; /* Cegah overflow keluar section tim */
     }
 
     .team-header-bar {
@@ -346,6 +361,13 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
       gap: 18px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* Pastikan track grid tidak memaksa item melebar melebihi kolom */
+    .grid > * {
+      min-width: 0;
     }
 
     .card {
@@ -357,6 +379,8 @@
       transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
       cursor: zoom-in;
+      overflow: hidden; /* Cegah foto keluar dari card */
+      max-width: 100%;
     }
 
     .card:hover {
@@ -368,9 +392,11 @@
     .card-inner {
       position: relative;
       border-radius: 11px;
-      overflow: hidden;
+      overflow: hidden; /* Potong konten mengikuti sudut melengkung card-inner */
       background: #08141a;
       border: 1px solid rgba(245, 158, 11, 0.25);
+      width: 100%;
+      max-width: 100%;
     }
 
     .card-num-badge {
@@ -415,15 +441,22 @@
     .card-img-wrapper {
       position: relative;
       width: 100%;
+      max-width: 100%;
       padding-top: 118%;
-      overflow: hidden;
+      overflow: hidden; /* Kunci utama: potong apapun yang keluar wrapper */
+      contain: layout paint;
       background: #0b1c24;
     }
 
     .card img {
+      display: block;
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
       object-fit: cover;
       object-position: top center;
       transition: transform 0.4s ease;
@@ -648,8 +681,10 @@
     }
 
     .row-photo-btn {
+      position: relative;
       width: 50px;
       height: 58px;
+      max-width: 100%;
       border-radius: 8px;
       border: 1.5px dashed rgba(16, 185, 129, 0.5);
       background: #0d2029;
@@ -659,9 +694,9 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      overflow: hidden;
+      overflow: hidden; /* Potong thumbnail agar tidak keluar kotak 50x58px */
+      contain: layout paint;
       flex-shrink: 0;
-      position: relative;
     }
 
     .row-photo-btn:hover {
@@ -670,8 +705,11 @@
     }
 
     .row-photo-btn img {
+      display: block;
       width: 100%;
       height: 100%;
+      max-width: 100%;
+      max-height: 100%;
       object-fit: cover;
       object-position: top center;
     }
@@ -793,6 +831,7 @@
       justify-content: center;
       padding: 20px;
       animation: fadeOverlay 0.2s ease;
+      overflow: hidden;
     }
 
     .lightbox-overlay.open {
@@ -808,6 +847,7 @@
       position: relative;
       width: 100%;
       max-width: 540px;
+      max-height: 92vh;
       background: linear-gradient(165deg, #132c37 0%, #09171e 100%);
       border: 2px solid var(--gold);
       border-radius: 22px;
@@ -824,6 +864,7 @@
       padding: 12px 18px;
       background: rgba(7, 19, 24, 0.9);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
     }
 
     .lightbox-event {
@@ -858,17 +899,22 @@
     .lightbox-photo-area {
       position: relative;
       width: 100%;
+      max-width: 100%;
       height: min(62vh, 520px);
       background: #061014;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      overflow: hidden; /* Cegah foto lightbox keluar area */
+      contain: layout paint;
     }
 
     .lightbox-photo-area img {
+      display: block;
       width: 100%;
       height: 100%;
+      max-width: 100%;
+      max-height: 100%;
       object-fit: contain;
     }
 
@@ -876,6 +922,7 @@
       position: absolute;
       top: 14px;
       left: 14px;
+      z-index: 2;
       background: #071318;
       border: 2px solid var(--gold);
       color: var(--gold-light);
@@ -889,6 +936,7 @@
     .lightbox-nav {
       position: absolute;
       top: 50%;
+      z-index: 2;
       transform: translateY(-50%);
       width: 44px;
       height: 44px;
@@ -920,6 +968,7 @@
       text-align: center;
       background: #09171e;
       border-top: 3px solid var(--turf-green);
+      flex-shrink: 0;
     }
 
     .lightbox-team {
@@ -1174,8 +1223,121 @@
     }
 
     @media (max-width: 640px) {
-      .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .team-section { padding: 16px; }
+      .container {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 12px;
+        overflow: hidden;
+      }
+
+      .controls {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 12px;
+        overflow: hidden;
+      }
+
+      .team-section {
+        width: 100%;
+        max-width: 100%;
+        padding: 14px;
+        overflow: hidden;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .grid > * {
+        min-width: 0;
+        max-width: 100%;
+      }
+
+      .card {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden; /* Kunci agar foto & konten tidak keluar card di mobile */
+      }
+
+      .card-inner {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden; /* Kunci sudut melengkung di mobile */
+      }
+
+      .card-img-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        padding-top: 118%;
+        overflow: hidden;
+        contain: layout paint;
+      }
+
+      .card img {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        object-position: top center;
+      }
+
+      .row-photo-btn {
+        position: relative;
+        width: 50px;
+        height: 58px;
+        max-width: 100%;
+        overflow: hidden;
+        contain: layout paint;
+      }
+
+      .row-photo-btn img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        object-position: top center;
+      }
+
+      .lightbox-overlay {
+        padding: 12px;
+      }
+
+      .lightbox-stage {
+        width: 100%;
+        max-width: 100%;
+        max-height: 90vh;
+        overflow: hidden;
+      }
+
+      .lightbox-photo-area {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        height: min(60vh, 70vw); /* Batasi tinggi agar tidak melebihi viewport HP */
+        overflow: hidden;
+        contain: layout paint;
+      }
+
+      .lightbox-photo-area img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+
       .team-title-wrap h2 { font-size: 20px; }
       .team-actions { width: 100%; }
       .btn-download-team, .btn-quick-add { flex: 1; justify-content: center; }
